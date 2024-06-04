@@ -1,9 +1,12 @@
 *.mp4
 *.mp3
 *.json
-*.png
 *.gif
+*.pdn
+*.jpg
 
+
+images/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
