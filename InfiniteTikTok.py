@@ -116,6 +116,8 @@ def get_description_pictures(story):
 def convert_to_dict(lines):
     visual_dict = {}
     for line in lines:
+        if(', SHOW AN IMAGE OF ' not in line):
+            continue
         print(line)
         if('"' not in line[len(line)-5:]):
             line = line + '"'
@@ -253,7 +255,7 @@ def add_audio_to_video(video, audio_path) -> VideoClip:
     audio = AudioFileClip(audio_path)
     video = video.set_audio(audio)
     return video
-def add_multiple_images_to_video(input_video, images, timings) -> VideoClip:
+def add_multiple_images_to_video(input_video:VideoClip, images, timings, write_video = False, write_path = None) -> VideoClip:
     print(f"Adding {len(images)} images to the video")
     print(f"Images : {images}")
     print(f"Timings : {timings}")
@@ -297,11 +299,19 @@ def add_multiple_images_to_video(input_video, images, timings) -> VideoClip:
     clips.append(clip)
     final_clip = concatenate_videoclips(clips, method="chain")
 
+    if(write_video):
+        print('writing temporary video')
+        if(write_path == None):
+            write_path = 'output-temp.mp4'
+        final_clip.write_videofile(write_path.replace('.mp4', '') + '.mp4')
+        return VideoFileClip(write_path)
+        
     return final_clip
 def add_subtitles_to_video(video, subtitles, position = ('center', 0.9)) -> VideoClip:
     # Create a list of TextClip objects for each subtitle
     text_clips = []
     for word in subtitles.words:
+    # for word in subtitles['words']:
         # print(word['word'], word['start'], word['end'])
         text_clip = TextClip(word['word'], fontsize=60, color='white')
         text_clip = text_clip.set_start(word['start']).set_duration(word['end'] - word['start'])
@@ -348,9 +358,12 @@ def getTextTimingsOfMp4(mp4file):
     return transcript
 
 
-def create_video_from_text(text, video_name = None, background = 'images\\background1.png', output_name = 'output.mp4'):
+def create_video_from_text(text, video_name = None, background = 'images\\background1.png', output_name = None):
     if(video_name == None):
         video_name = onlychars(" ".join(text.split(' ')[0:5]))
+    if(output_name == None):
+        output_name = video_name.replace(' ', '-') + '.mp4'
+        
     print(f"Starting creation of the video : {video_name}")
     
     # create and clear the folder for the video
@@ -358,7 +371,7 @@ def create_video_from_text(text, video_name = None, background = 'images\\backgr
     local_path = os.path.join('Projects', video_name)
     if(not os.path.exists(local_path)):
         os.mkdir(local_path)
-    # clear_folder(local_path)
+    clear_folder(local_path)
 
     # create voice for the video
     print(f"Creating voice")
@@ -393,7 +406,7 @@ def create_video_from_text(text, video_name = None, background = 'images\\backgr
     video = video.subclip(0, timing_description.duration)
     print('Done')
     print(f"Adding images to video")
-    video = add_multiple_images_to_video(video, images, timings)
+    video = add_multiple_images_to_video(video, images, timings, write_video=True, write_path=os.path.join(local_path,'temp.mp4'))
     print('Done')
     print(f"Adding subtitles to video")
     video = add_subtitles_to_video(video, timing_description)
@@ -478,4 +491,4 @@ With her newfound knowledge, Momo started spending her days in the flower patche
 
 From that day forward, Momo became a friend to the butterflies. She played with them among the flowers, chasing their delicate dance but never trying to catch them. Momo's patience and understanding had turned her dream into reality, proving that sometimes, the best way to play is to let the game come to you."""
     
-    create_video_from_text(text3, video_name='cat-butterfly', output_name='cat-butterfly.mp4')
+    create_video_from_text(text, video_name='Houdini')
