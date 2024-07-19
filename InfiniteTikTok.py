@@ -404,6 +404,8 @@ def create_video_from_text(text, video_name = None, background = 'images\\backgr
     # video = image_to_video(image_path=background, duration=timing_description.duration)
     video = VideoFileClip('videos\\satifying\\satisfying.mp4')
     video = video.subclip(0, timing_description.duration)
+    print(video.size)
+    video = video.resize(width=1080, height=1920)
     print('Done')
     print(f"Adding images to video")
     video = add_multiple_images_to_video(video, images, timings, write_video=True, write_path=os.path.join(local_path,'temp.mp4'))
