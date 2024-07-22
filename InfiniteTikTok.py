@@ -358,7 +358,7 @@ def getTextTimingsOfMp4(mp4file):
     return transcript
 
 
-def create_video_from_text(text, video_name = None, background = 'images\\background1.png', output_name = None):
+def create_video_from_text(text, video_name = None, background_video_path = 'videos\\satifying\\satisfying.mp4', output_name = None):
     if(video_name == None):
         video_name = onlychars(" ".join(text.split(' ')[0:5]))
     if(output_name == None):
@@ -402,10 +402,14 @@ def create_video_from_text(text, video_name = None, background = 'images\\backgr
     # create whole video
     print("Creating video")
     # video = image_to_video(image_path=background, duration=timing_description.duration)
-    video = VideoFileClip('videos\\satifying\\satisfying.mp4')
+    video = VideoFileClip(background_video_path)
     video = video.subclip(0, timing_description.duration)
+    new_width_ratio = 1/3
+    new_width = int(video.w * new_width_ratio)
+    start_x = video.w - 2*new_width
+    video = video.crop(x1=start_x, width=new_width)
     print(video.size)
-    video = video.resize(width=1080, height=1920)
+    # video = video.resize(width=1080, height=1920)
     print('Done')
     print(f"Adding images to video")
     video = add_multiple_images_to_video(video, images, timings, write_video=True, write_path=os.path.join(local_path,'temp.mp4'))
@@ -492,5 +496,7 @@ She observed the butterflies and noticed they loved flowers. So, Momo decided to
 With her newfound knowledge, Momo started spending her days in the flower patches, waiting patiently. One sunny afternoon, a butterfly landed on a flower next to her. Momo held her breath, and to her delight, the butterfly didn't fly away. Instead, it fluttered its wings, as if inviting Momo to play.
 
 From that day forward, Momo became a friend to the butterflies. She played with them among the flowers, chasing their delicate dance but never trying to catch them. Momo's patience and understanding had turned her dream into reality, proving that sometimes, the best way to play is to let the game come to you."""
+    text4 = """ I was a humble park bench, nestled under the shade of an ancient oak tree. I've seen countless sunrises, each one painting the sky with a different palette of colors. One day, a young girl named Lily sat on me, her eyes filled with curiosity. She visited me every day, her laughter echoing through the park, her stories bringing me to life. Years passed, and Lily grew older. Her visits became less frequent, but her smile never faded. One day, she returned, not as a visitor, but as the park's new caretaker. She sat on me, her eyes filled with memories. "Hello, old friend," she whispered, and I felt a warmth that the sun could never provide. """
+    text5 = """Once upon a time, in the heart of bustling New York City, I found a peculiar little shop. It was tucked away in a narrow alley, almost invisible to the unobservant eye. The sign above the door read "Time Emporium."Intrigued, I stepped inside. The shop was filled with clocks of all shapes and sizes, each ticking in its own unique rhythm. An old man, with a white beard and twinkling eyes, greeted me. He introduced himself as the Timekeeper.He showed me a small, antique pocket watch. "This one," he said, "holds the power to slow down time." I laughed, thinking it was a joke, but he insisted it was true.Curious, I bought the pocket watch and left the shop. As I stepped back into the bustling city, I opened the watch. Suddenly, the world around me slowed. People moved like they were wading through honey, cars inched forward, and the city's noise faded into a soft hum.I marveled at the pocket watch, feeling like I had the world to myself. But then I remembered, time waits for no one. I closed the watch, and the city sprang back to life.I still visit the Time Emporium, and the old Timekeeper always has a new story to tell. But that's a tale for another time."""
     
-    create_video_from_text(text, video_name='Houdini')
+    create_video_from_text(text5, 'NYC-clock', 'videos\\brackgrounds\\yellow_matrix.mp4')
